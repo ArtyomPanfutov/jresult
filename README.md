@@ -1,6 +1,6 @@
 # JResult
 ## Description
-**JResult** is a lightweight, versatile Java library designed to streamline handling operation outcomes, making error handling and result processing cleaner and more intuitive. 
+**JResult** is a Java library designed to handle operation outcomes, making error handling and result processing cleaner and more intuitive. 
 By encapsulating the results of operations in a Result<T> object, **JResult** offers a robust alternative to traditional exception handling, enhancing code readability, maintainability, and error management in Java applications.
 ## Key Features
 * Generic Result Container: Handle any operation outcome, success or failure, with a single, type-safe Result<T> class.

@@ -12,18 +12,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class ResultTest {
-    private static final String ERROR = "something went wrong";
+
+    private static final String ERROR_TEXT = "something went wrong";
+    private static final GenericError ERROR = new Error(ERROR_TEXT);
     private static final Object OBJECT = new Object();
 
     private Object object;
@@ -37,6 +42,9 @@ class ResultTest {
     @Mock
     private Supplier<Result<Void>> supplier;
 
+    @Mock
+    private Supplier<Result<Object>> objectSupplier;
+
     @BeforeEach
     public void init() {
         object = new Object();
@@ -48,7 +56,7 @@ class ResultTest {
         var result = Result.success(object);
 
         // THEN
-        assertEquals(object, result.object());
+        assertEquals(object, result.getObject());
         assertTrue(result.isSuccess());
         assertFalse(result.hasErrors());
     }
@@ -59,18 +67,18 @@ class ResultTest {
         var result = Result.success(object, List.of(ERROR));
 
         // THEN
-        assertEquals(object, result.object());
+        assertEquals(object, result.getObject());
         assertTrue(result.isSuccess());
         assertTrue(result.hasErrors());
     }
 
     @Test
-    void testSuccessWithError() {
+    void testSuccessWithTextError() {
         // WHEN
-        var result = Result.success(object, ERROR);
+        var result = Result.success(object, ERROR_TEXT);
 
         // THEN
-        assertEquals(object, result.object());
+        assertEquals(object, result.getObject());
         assertTrue(result.isSuccess());
         assertTrue(result.hasErrors());
     }
@@ -81,17 +89,17 @@ class ResultTest {
         var result = Result.successVoid();
 
         // THEN
-        assertNull(result.object());
+        assertNull(result.getObject());
         assertTrue(result.isSuccess());
     }
 
     @Test
     void testSuccessVoidWithError() {
         // WHEN
-        var result = Result.successVoid(ERROR);
+        var result = Result.successVoid(ERROR_TEXT);
 
         // THEN
-        assertNull(result.object());
+        assertNull(result.getObject());
         assertTrue(result.isSuccess());
         assertTrue(result.hasErrors());
     }
@@ -102,7 +110,7 @@ class ResultTest {
         var result = Result.successVoid(List.of(ERROR));
 
         // THEN
-        assertNull(result.object());
+        assertNull(result.getObject());
         assertTrue(result.isSuccess());
         assertTrue(result.hasErrors());
     }
@@ -110,24 +118,12 @@ class ResultTest {
     @Test
     void testFailureWithError() {
         // WHEN
-        var result = Result.failure(ERROR);
+        var result = Result.failure(ERROR_TEXT);
 
         // THEN
-        assertNull(result.object());
+        assertNull(result.getObject());
         assertTrue(result.isFailure());
         assertTrue(result.hasErrors());
-    }
-
-    @Test
-    void testFailureWithErrors() {
-        // WHEN
-        var result = Result.failure(ERROR, ERROR);
-
-        // THEN
-        assertNull(result.object());
-        assertTrue(result.isFailure());
-        assertTrue(result.hasErrors());
-        assertEquals(2, result.errorCount());
     }
 
     @Test
@@ -136,10 +132,77 @@ class ResultTest {
         var result = Result.failure(List.of(ERROR, ERROR));
 
         // THEN
-        assertNull(result.object());
+        assertNull(result.getObject());
         assertTrue(result.isFailure());
         assertTrue(result.hasErrors());
         assertEquals(2, result.errorCount());
+    }
+
+    @Test
+    void testFailureWithErrorArgs() {
+        // WHEN
+        var result = Result.failure(ERROR, ERROR, ERROR);
+
+        // THEN
+        assertNull(result.getObject());
+        assertTrue(result.isFailure());
+        assertTrue(result.hasErrors());
+    }
+
+    @Test
+    void testFailureWithErrors() {
+        // WHEN
+        var result = Result.failure(ERROR_TEXT, ERROR_TEXT);
+
+        // THEN
+        assertNull(result.getObject());
+        assertTrue(result.isFailure());
+        assertTrue(result.hasErrors());
+        assertEquals(2, result.errorCount());
+    }
+
+    @Test
+    void testFailureWithErrorText() {
+        // WHEN
+        var result = Result.failure(ERROR_TEXT, ERROR_TEXT);
+
+        // THEN
+        assertNull(result.getObject());
+        assertTrue(result.isFailure());
+        assertTrue(result.hasErrors());
+        assertEquals(2, result.errorCount());
+    }
+
+    @Test
+    void testFailureWithThrowable() {
+        // WHEN
+        var result = Result.failure(new RuntimeException());
+
+        // THEN
+        assertTrue(result.isFailure());
+        assertTrue(result.firstError().getThrowable().isPresent());
+    }
+
+    @Test
+    void testFailureWithMessageAndThrowable() {
+        // WHEN
+        var result = Result.failure(ERROR_TEXT, new RuntimeException());
+
+        // THEN
+        assertTrue(result.isFailure());
+        assertTrue(result.firstError().getThrowable().isPresent());
+        assertFalse(result.firstError().getMessage().isEmpty());
+    }
+
+    @Test
+    void testFailureWithThrowableAndMetadata() {
+        // WHEN
+        var result = Result.failure(ERROR_TEXT, new RuntimeException(), Map.of("Severity", "error"));
+
+        // THEN
+        assertTrue(result.isFailure());
+        assertTrue(result.firstError().getThrowable().isPresent());
+        assertTrue(result.firstError().getMetadata().isPresent());
     }
 
     @ParameterizedTest
@@ -156,7 +219,7 @@ class ResultTest {
     @Test
     void testHasErrors() {
         // WHEN
-        var result = Result.failure(ERROR);
+        var result = Result.failure(ERROR_TEXT);
 
         // THEN
         assertTrue(result.hasErrors());
@@ -174,7 +237,7 @@ class ResultTest {
     @Test
     void testErrorCount() {
         // WHEN
-        var result = Result.failure(ERROR, ERROR);
+        var result = Result.failure(ERROR_TEXT, ERROR_TEXT);
 
         // THEN
         assertEquals(2, result.errorCount());
@@ -183,7 +246,7 @@ class ResultTest {
     @Test
     void testFirstError() {
         // WHEN
-        var result = Result.failure(ERROR, "another");
+        var result = Result.failure(ERROR_TEXT, "another");
 
         // THEN
         assertEquals(ERROR, result.firstError());
@@ -202,6 +265,18 @@ class ResultTest {
     }
 
     @Test
+    void testIfSuccessForConsumerOnFailedResult() {
+        // GIVEN
+        var result = Result.failure(ERROR);
+
+        // WHEN
+        result.ifSuccess(objectConsumer);
+
+        // THEN
+        verifyNoInteractions(objectConsumer);
+    }
+
+    @Test
     void testIfSuccessForSupplier() {
         // GIVEN
         var result = Result.successVoid();
@@ -214,9 +289,22 @@ class ResultTest {
     }
 
     @Test
+    void testIfSuccessForSupplierOnFailedResult() {
+        // GIVEN
+        Result<Object> result = Result.failure(ERROR_TEXT);
+
+        // WHEN
+        var anotherResult = result.ifSuccess(objectSupplier);
+
+        // THEN
+        verifyNoInteractions(objectSupplier);
+        assertEquals(result, anotherResult);
+    }
+
+    @Test
     void testIfFailure() {
         // GIVEN
-        var result = Result.failure(ERROR);
+        var result = Result.failure(ERROR_TEXT);
 
         // WHEN
         result.ifFailure(objectConsumer);
@@ -226,12 +314,25 @@ class ResultTest {
     }
 
     @Test
+    void testIfFailureOnSucceededResult() {
+        // GIVEN
+        var result = Result.successVoid(ERROR_TEXT);
+
+        // WHEN
+        var another = result.ifFailure(consumer);
+
+        // THEN
+        verifyNoInteractions(consumer);
+        assertEquals(result, another);
+    }
+
+    @Test
     void testObject() {
         // GIVEN
         var result = Result.success(OBJECT);
 
         // WHEN
-        var object = result.object();
+        var object = result.getObject();
 
         // THEN
         assertEquals(OBJECT, object);
@@ -244,7 +345,7 @@ class ResultTest {
         var other = new Object();
 
         // WHEN
-        var retrieved = result.objectOrElse(other);
+        var retrieved = result.getObjectOrElse(other);
 
         // THEN
         assertEquals(other, retrieved);
@@ -266,10 +367,10 @@ class ResultTest {
     @Test
     void testGetObjectNonNull() {
         // GIVEN
-        var result = Result.failure(ERROR);
+        var result = Result.failure(ERROR_TEXT);
 
         // WHEN
-        Executable command = result::objectNonNull;
+        Executable command = result::getNonNullObject;
 
         // THEN
         assertThrows(NullPointerException.class, command);
@@ -278,10 +379,10 @@ class ResultTest {
     @Test
     void testErrors() {
         // GIVEN
-        var result = Result.failure(ERROR);
+        var result = Result.failure(ERROR_TEXT);
 
         // WHEN
-        var errors = result.errors();
+        var errors = result.getErrors();
 
         // THEN
         assertNotNull(errors);
@@ -299,9 +400,9 @@ class ResultTest {
         return Stream.of(
                 Arguments.of(Result.success(new Object()), Result.success(new Object()), false),
                 Arguments.of(Result.success(null), Result.success(new Object()), false),
-                Arguments.of(Result.failure(ERROR, ERROR), Result.failure(ERROR), false),
+                Arguments.of(Result.failure(ERROR_TEXT, ERROR_TEXT), Result.failure(ERROR_TEXT), false),
                 Arguments.of(Result.success(null), Result.success(null), true),
-                Arguments.of(Result.successVoid(ERROR), Result.successVoid(List.of(ERROR)), true),
+                Arguments.of(Result.successVoid(ERROR_TEXT), Result.successVoid(ERROR_TEXT), true),
                 Arguments.of(Result.successVoid(), Result.success(null), true),
                 Arguments.of(Result.success(OBJECT), Result.success(OBJECT), true),
                 Arguments.of(Result.successVoid(), Result.successVoid(), true)
@@ -324,13 +425,56 @@ class ResultTest {
     @Test
     void testToString() {
         // GIVEN
-        String content = "content";
-        var result = Result.success(content, ERROR);
+        var result = Result.failure(new Error(ERROR_TEXT, new RuntimeException(), emptyMap()));
 
         // WHEN
         var string = result.toString();
 
         // THEN
-        assertEquals("Result{success=true, object=content, errors=[something went wrong]}", string);
+        assertEquals("Result{success=false, object=null, errors=[Error[message=something went wrong, " +
+                "throwable=java.lang.RuntimeException, metadata={}]]}", string);
+    }
+
+    @Test
+    void testBuilder() {
+        // WHEN
+        var result = Result.builder()
+                .success(true)
+                .object(1L)
+                .errors(List.of(ERROR))
+                .error(ERROR)
+                .build();
+
+        // THEN
+        assertTrue(result.isSuccess());
+        assertNotNull(result.getObject());
+        assertEquals(ERROR, result.firstError());
+    }
+
+    @Test
+    void testSuccessBuilder() {
+        // WHEN
+        var result = Result.successBuilder().build();
+
+        // THEN
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    void testFailureBuilder() {
+        // WHEN
+        var result = Result.failureBuilder().build();
+
+        // THEN
+        assertTrue(result.isFailure());
+    }
+
+    @Test
+    void testThrowOnNotSetSuccessFlag() {
+        // WHEN
+        Executable command = () -> Result.builder().build();
+
+        // THEN
+        assertThrows(ResultException.class, command);
     }
 }

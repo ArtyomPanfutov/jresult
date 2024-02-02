@@ -32,31 +32,25 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A generic container for a result of an operation and the error messages.
+ * A generic container for a result of an operation and errors.
  * To be used as a return type in the business code to avoid using the exceptions for the control flow.
  *
  * @param <T> A type parameter of a result object.
  */
 public class Result<T> {
 
-    private static final Result<Void> SUCCESS_VOID = new Result<>(true, null, emptyList());
+    protected static final Result<Void> SUCCESS_VOID = new Result<>(true, null, emptyList());
 
-    private final boolean success;
+    protected final boolean success;
 
-    private final T object;
+    protected final T object;
 
-    private final List<String> errors;
+    protected final List<GenericError> errors;
 
-    public Result(boolean success, T object, List<String> errors) {
+    protected Result(boolean success, T object, List<GenericError> errors) {
         this.success = success;
         this.object = object;
         this.errors = errors;
-    }
-
-    public Result(boolean success, T object, String errorMessage) {
-        this.success = success;
-        this.object = object;
-        this.errors = List.of(errorMessage);
     }
 
     /**
@@ -71,27 +65,27 @@ public class Result<T> {
     }
 
     /**
-     * Constructs a result object for a succeeded operation with error messages.
+     * Constructs a result object for a succeeded operation with not critical errors.
      *
      * @param object An object that is the result of an operation.
-     * @param errors The errors that occurred during the operation.
+     * @param errors The list of errors that occurred during an operation.
      *
      * @return Success result with a wrapped object and errors.
      */
-    public static <T> Result<T> success(T object, List<String> errors) {
+    public static <T> Result<T> success(T object, List<GenericError> errors) {
         return new Result<>(true, object, errors);
     }
 
     /**
-     * Constructs a result object for a succeeded operation with error messages.
+     * Constructs a result object for a succeeded operation with not critical error message.
      *
      * @param object An object that is the result of an operation.
-     * @param error An error message that occurred during the operation.
+     * @param message An error message that occurred during an operation.
      *
      * @return Success result with a wrapped object and errors.
      */
-    public static <T> Result<T> success(T object, String error) {
-        return new Result<>(true, object, List.of(error));
+    public static <T> Result<T> success(T object, String message) {
+        return new Result<>(true, object, List.of(new Error(message)));
     }
 
     /**
@@ -104,62 +98,130 @@ public class Result<T> {
     }
 
     /**
-     * Constructs a result object for a succeeded operation with no wrapped object.
+     * Constructs a result object for a succeeded operation with not critical error message and no object.
      *
-     * @param error An error message that occurred during the operation.
+     * @param message An error message that occurred during an operation.
      *
      * @return Success result.
      */
-    public static Result<Void> successVoid(String error) {
-        return new Result<>(true, null, List.of(error));
+    public static Result<Void> successVoid(String message) {
+        return new Result<>(true, null, List.of(new Error(message)));
     }
 
     /**
      * Constructs a result object for a succeeded operation with no wrapped object.
      *
-     * @param errors The error messages that occurred during the operation.
+     * @param errors The error messages that occurred during an operation.
      *
      * @return Success result.
      */
-    public static Result<Void> successVoid(List<String> errors) {
+    public static Result<Void> successVoid(List<GenericError> errors) {
         return new Result<>(true, null, errors);
     }
 
     /**
      * Constructs a result object for a failed operation.
      *
-     * @param errors The errors that have been collected during the operation.
+     * @param errors The errors that have been collected during an operation.
      *
      * @return Error result.
      */
-    public static <T> Result<T> failure(List<String> errors) {
+    public static <T> Result<T> failure(List<GenericError> errors) {
         return new Result<>(false, null, errors);
     }
 
     /**
      * Constructs a result object for a failed operation.
      *
-     * @param error The error message that occurred during the operation.
+     * @param error The error message that occurred during an operation.
      *
      * @return Error result.
      */
-    public static <T> Result<T> failure(String error) {
+    public static <T> Result<T> failure(GenericError error) {
         return new Result<>(false, null, List.of(error));
     }
 
     /**
      * Constructs a result object for a failed operation.
      *
-     * @param firstError The error message that occurred during the operation.
+     * @param errorMessage The error message that occurred during an operation.
+     *
+     * @return Error result.
+     */
+    public static <T> Result<T> failure(String errorMessage) {
+        return new Result<>(false, null, List.of(new Error(errorMessage)));
+    }
+
+    /**
+     * Constructs a result object for a failed operation.
+     *
+     * @param throwable An exception that occurred during an operation
+     *
+     * @return Error result.
+     */
+    public static <T> Result<T> failure(Throwable throwable) {
+        return new Result<>(false, null, List.of(new Error(throwable)));
+    }
+
+    /**
+     * Constructs a result object for a failed operation.
+     *
+     * @param message An error message that occurred during an operation.
+     * @param throwable An exception that occurred during an operation.
+     *
+     * @return Error result.
+     */
+    public static <T> Result<T> failure(String message, Throwable throwable) {
+        return new Result<>(false, null, List.of(new Error(message, throwable)));
+    }
+
+    /**
+     * Constructs a result object for a failed operation.
+     *
+     * @param message An error message that occurred during an operation.
+     * @param throwable An exception that occurred during an operation.
+     * @param metadata A metadata map for additional information about the error.
+     *
+     * @return Error result.
+     */
+    public static <T> Result<T> failure(String message, Throwable throwable, Map<String, ?> metadata) {
+        return new Result<>(false, null, List.of(new Error(message, throwable, metadata)));
+    }
+
+    /**
+     * Constructs a result object for a failed operation.
+     *
+     * @param firstError The error message that occurred during an operation.
      * @param otherErrors The additional error messages to complement the first error
      *
      * @return Error result.
      */
-    public static <T> Result<T> failure(String firstError, String... otherErrors) {
-        List<String> errors = new ArrayList<>();
-        errors.add(firstError);
-        Collections.addAll(errors, otherErrors);
-        return new Result<>(false, null, errors);
+    public static <T> Result<T> failure(GenericError firstError, GenericError... otherErrors) {
+        var builder = Result.<T>failureBuilder()
+                .error(firstError);
+
+        for (var another : otherErrors) {
+            builder.error(another);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Constructs a result object for a failed operation.
+     *
+     * @param firstError The error message that occurred during an operation.
+     * @param otherErrors The additional error messages to complement the first error
+     *
+     * @return Error result.
+     */
+    public static <T> Result<T> failure(String firstError, String ... otherErrors) {
+        var builder = Result.<T>failureBuilder()
+                .error(new Error(firstError));
+
+        for (var another : otherErrors) {
+            builder.error(new Error(another));
+        }
+        return builder.build();
     }
 
     /**
@@ -206,9 +268,9 @@ public class Result<T> {
      *
      * @throws NoSuchElementException if errors are null or empty
      */
-    public String firstError() {
+    public GenericError firstError() {
         if (!hasErrors()) {
-            throw new NoSuchElementException("The errors are null or empty");
+            throw new ResultException("Can't get the first error. The errors are null or empty.");
         }
         return errors.getFirst();
     }
@@ -260,7 +322,7 @@ public class Result<T> {
      *
      * @return A result object.
      */
-    public T object() {
+    public T getObject() {
         return object;
     }
 
@@ -272,7 +334,7 @@ public class Result<T> {
      *
      * @return A result object.
      */
-    public T objectOrElse(T other) {
+    public T getObjectOrElse(T other) {
         return object == null ? other : object;
     }
 
@@ -289,23 +351,140 @@ public class Result<T> {
     }
 
     /**
-     * Returns an object with a non-null check.
+     * Returns a non null object.
      *
      * @return A result object that is not null.
      *
      * @throws NullPointerException if {@code object} is null
      */
-    public T objectNonNull() {
+    public T getNonNullObject() {
         return requireNonNull(object);
     }
 
     /**
-     * The errors that have been collected during the operation.
+     * The errors that have been collected during an operation.
      *
-     * @return A list of error messages.
+     * @return A list of errors.
      */
-    public List<String> errors() {
+    public List<GenericError> getErrors() {
         return errors;
+    }
+
+    /**
+     * A builder for operation result.
+     *
+     * @return A builder object.
+     *
+     * @param <T> a type parameter of a result object.
+     */
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
+    }
+
+    /**
+     * A builder for a succeeded operation.
+     *
+     * @return A builder object with the success flag set to true.
+     *
+     * @param <T> a type parameter of a result object.
+     */
+    public static <T> Builder<T> successBuilder() {
+        return Result.<T>builder()
+                .success(true);
+    }
+
+    /**
+     * A builder for a failed operation.
+     *
+     * @return A builder object with the success flag set to false.
+     *
+     * @param <T> a type parameter of a result object.
+     */
+    public static <T> Builder<T> failureBuilder() {
+        return Result.<T>builder()
+                .success(false);
+    }
+
+    /**
+     * A builder class to make constructor of the result object more readable.
+     *
+     * @param <T> a type parameter of a result object.
+     */
+    public static class Builder<T> {
+        private Boolean success;
+        private T object;
+        private List<GenericError> errors;
+
+        /**
+         * Sets the success flag.
+         *
+         * @param success True — if operation succeeded, otherwise — False.
+         *
+         * @return Builder, for chaining.
+         */
+        public Builder<T> success(boolean success) {
+            this.success = success;
+            return this;
+        }
+
+        /**
+         * Sets the object.
+         *
+         * @param object A result object of an operation. Optional.
+         *
+         * @return Builder, for chaining.
+         */
+        public Builder<T> object(T object) {
+            this.object = object;
+            return this;
+        }
+
+        /**
+         * Sets the errors.
+         *
+         * @param errors The error list that occurred during an operation.
+         *
+         * @return Builder, for chaining.
+         */
+        public Builder<T> errors(List<GenericError> errors) {
+            ensureErrors();
+            this.errors.addAll(errors);
+            return this;
+        }
+
+        /**
+         * Adds the error to the error list.
+         *
+         * @param error The error that occurred during an operation.
+         *
+         * @return Builder, for chaining.
+         */
+        public Builder<T> error(GenericError error) {
+            ensureErrors();
+            this.errors.add(error);
+            return this;
+        }
+
+        private void ensureErrors() {
+            if (this.errors == null) {
+                this.errors = new ArrayList<>();
+            }
+        }
+
+        /**
+         * Builds the result.
+         *
+         * @return Result object.
+         */
+        public Result<T> build() {
+            if (success == null) {
+                throw new ResultException("The required success field is not set!");
+            }
+            List<GenericError> immutableErrors = errors == null
+                    ? emptyList()
+                    : Collections.unmodifiableList(errors);
+            return new Result<>(success, object, immutableErrors);
+        }
     }
 
     @Override

@@ -9,10 +9,13 @@ By encapsulating the results of operations in a Result<T> object, **JResult** of
 * Composable Results: Easily chain and compose multiple operation results without nested conditionals.
 * Extensible Design: Designed with extensibility in mind, allowing for seamless integration with existing projects and further customization.
 ## Getting Started
-### Creating the Result object
-The following example shows a simple way to create result object. The method `createAccount(...)` performs a validation before it creates an account.
-If an account is already exists it returns a result object for a failed operation using the static factory methods `Result.failure(...)`
-Otherwise, it creates an account and returns a result object for a succeeded operation that contains a `long` identifier value of a created account.
+### Constructing the result objects
+Creating a Result object is a straightforward way to encapsulate the outcome of operations, which might succeed or fail based on certain conditions. 
+There are several static factory methods in the `Result` class which can be used for an operation result creation.
+
+The following example shows a simple way to create result object. The made up method `createAccount(...)` performs a validation before it creates an account.
+* **Failure Case**: If the account already exists,` Result.failure("The account already exists")` is returned, indicating the operation's failure with an appropriate error message.
+* **Success Case**: For a new account, the method proceeds with creation and returns `Result.success(create(name))`, encapsulating the new account's identifier.
 
 ```Java
     public Result<Long> createAccount(String name) {
@@ -31,7 +34,7 @@ The client code for the `createAccount(...)` method might look like this.
         createAccount("My new account")
                 .ifFailure(failure -> System.out.println("Error: " + failure.firstError()))
                 .ifSuccess(success -> System.out.println("Created account " + success.getObject()));
-}
+    }
 ```
 Alternatively, the result can be handled using the traditional `if-else` statements and the boolean flag that indicate the operation success.
 ```Java
@@ -40,19 +43,18 @@ Alternatively, the result can be handled using the traditional `if-else` stateme
         if (result.isFailure()) {
             System.out.println("Error: " + result.firstError());
         } else {
-            System.out.println("The account has been created" + result.getObject());
+            System.out.println("The account has been created " + result.getObject());
         }
     }
 ```
 
 ### Chaining the results
-There is an option to execute operations that return a result in a chain. The following example shows how to chain multiple `createAccount(...)` 
-calls depending on the last executed result. 
+Result chaining is a powerful technique to execute a series of operations where each subsequent operation depends on the success of its predecessor.
 
-In the following example, there are **four** `createAccount(...)` chained calls.
-If the result of a first call is failure then all the next calls of the `createAccount(...)` are **NOT** executed. 
-If the result of a first call is success then the second call is executed and the success check on the last result is performed again to determined whether the next call should be executed or not.
-
+#### Sequential execution:
+* Starting Point: The chain initiates with the createAccount("Account 1") operation. The continuation of the chain hinges on the success of this initial call.
+* Continuation Criteria: Upon a successful outcome, the next createAccount(...) operation is triggered. This pattern repeats, with each operation's success cueing the next in the sequence.
+* Termination on Failure: Should any createAccount(...) operation fail, the chain ceases to proceed, preventing any further operations from executing. This ensures the chain's integrity by not executing subsequent operations based on a failed precursor.
 ```Java
     public void createAccountsExample() {
         createAccount("Account 1")
@@ -62,7 +64,9 @@ If the result of a first call is success then the second call is executed and th
     }
 ```
 
-**Important!** There can be only **ONE** `ifFailure(...)` handler for such chains. The failure handler is executed only if one of the results failed.
+#### Handling failures
+The `ifFailure(...)` method can be used to handle a failed result.
+**Important!** There can be only **ONE** `ifFailure(...)` handler in a such chain. The failure handler is executed only if one of the results failed.
 ```Java
     public void createAccountsExample() {
         createAccount("Account 1")
@@ -73,17 +77,22 @@ If the result of a first call is success then the second call is executed and th
     }
 
 ```
+Result chaining is an effective pattern for managing sequences of dependent operations, ensuring that each step is contingent upon the success of the previous one and providing a clear mechanism for handling any failures that occur.
 
-### Getting the operation result object
-The `Result` class is parametrized with a type that determines the class of the returned object that an operation produces.
-The result object **can be set only to the succeeded results**. 
+### Accessing the results
+The `Result` class encapsulates the outcome of operations, parameterized by the type of object it may return upon success. 
 
-For example, the following method `Result<Long> createAccount()` returns a result with a `Long` object if the operation result is success. 
+Only successful operations populate the result object, aligning the outcome with the operation's intent.
 
-The void methods should be parametrized with `Void` parameter, e.g. `Result<Void> createAccount()`. In such case the object of the operation result is null.
+#### Successful operation outcome
+For instance, `Result<Long> createAccount()` signifies a method that, upon a successful operation, returns a Long type result.
 
-There are multiple methods to get the result object from a result.
-The first is `getObject()` method. Note, that the returned object is nullable.
+For operations not returning any specific value, the `Result` class is parameterized with `Void`, e.g.,` Result<Void> createAccount()`, implying a null result object for successful void operations.
+
+#### Retrieving the result object
+There are several methods to get the result object from a result.
+
+* `getObject()`: Retrieves the result object, which could be null. 
 ```Java
     public void getObjectExample() {
         var result = createAccount("New account");
@@ -92,7 +101,7 @@ The first is `getObject()` method. Note, that the returned object is nullable.
 
 ```
 
-The second is `getNonNullObject()`. This method throws a `NullPointerException` if an object is null.
+* `getNonNullObject()`: Ensures a non-null result object, throwing a NullPointerException if it's null. 
 ```Java
     public void getNonNullObjectExample() {
         var result = createAccount("New account");
@@ -100,7 +109,7 @@ The second is `getNonNullObject()`. This method throws a `NullPointerException` 
     }
 ```
 
-The third is `getObjectOrElse(T)`. This method accepts a default value in case the result object is null.
+* `getObjectOrElse(T)`: Returns the result object or a default value if it's null. 
 ```Java
     public void getNonNullObjectExample() {
         var result = createAccount("New account");
@@ -108,8 +117,7 @@ The third is `getObjectOrElse(T)`. This method accepts a default value in case t
 }
 ```
 
-The fourth is `getObjectOrElse(Supplier<T> supplier)`. This method accepts a supplier lambda expression which is executed only if the return object is null.
-So it allows a lazy evaluation for a default value.
+* `getObjectOrElse(Supplier<T> supplier)`: Offers a lazy evaluation option for the default value, using a supplier lambda that executes only if the result object is null. 
 ```Java
     public void getObjectOrElseExample() {
         var result = createAccount("New account");
@@ -117,5 +125,11 @@ So it allows a lazy evaluation for a default value.
     }
 ```
 
+#### Best Practices
+* Utilize `getObject(`) for cases where a null outcome is acceptable or expected.
+* Apply `getNonNullObject()` when the operation's result must not be null, ensuring program integrity.
+* Opt for `getObjectOrElse(T defaultValue)` to provide a fallback value, enhancing fault tolerance.
+* Leverage `getObjectOrElse(Supplier<T> supplier)` for performance-sensitive contexts where constructing the default value is costly or unnecessary unless required.
+ 
 ## License
 **JResult** is open-sourced under the MIT license. Feel free to use it, contribute, and spread the word!

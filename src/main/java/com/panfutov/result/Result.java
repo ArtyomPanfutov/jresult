@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -87,7 +88,7 @@ public class Result<T> {
      * @return Success result with a wrapped object and errors.
      */
     public static <T> Result<T> success(T object, List<GenericError> errors) {
-        return new Result<>(true, object, errors);
+        return new Result<>(true, object, unmodifiableList(errors));
     }
 
     /**
@@ -131,7 +132,7 @@ public class Result<T> {
      * @return Success result.
      */
     public static Result<Void> successVoid(List<GenericError> errors) {
-        return new Result<>(true, null, errors);
+        return new Result<>(true, null, unmodifiableList(errors));
     }
 
     /**
@@ -143,7 +144,7 @@ public class Result<T> {
      * @return Error result.
      */
     public static <T> Result<T> failure(List<GenericError> errors) {
-        return new Result<>(false, null, errors);
+        return new Result<>(false, null, unmodifiableList(errors));
     }
 
     /**

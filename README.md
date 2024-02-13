@@ -5,7 +5,7 @@
 By encapsulating the results of operations in a Result<T> object, **JResult** offers a robust alternative to traditional exception handling, enhancing code readability, maintainability, and error management in Java applications.
 
 ## Alternative to Exceptions
-Using the operation result pattern instead of relying solely on exceptions for error handling in software development offers numerous benefits, contributing to more robust, readable, and maintainable code. Here are some key advantages:
+Using the operation result pattern instead of relying solely on exceptions for error handling in software development offers numerous benefits, contributing to more robust, readable, and maintainable code. 
 
 The operation result pattern makes the control flow more predictable by explicitly returning success or failure outcomes, as opposed to exceptions which can be thrown at any point in the execution flow.
 

@@ -6,7 +6,7 @@ By encapsulating the results of operations in a Result<T> object, **JResult** of
 ## Key Features
 * **Generic result container**: Handle any operation outcome, success or failure, with a single, type-safe Result<T> class.
 * **Fluent API**: Intuitive and fluent interface, making your code more readable and expressive.
-* **Enhanced Error Handling**: Clearly distinguish between expected operation outcomes and exceptional cases, reducing the misuse of exceptions.
+* **Enhanced error handling**: Clearly distinguish between expected operation outcomes and exceptional cases, reducing the misuse of exceptions.
 * **Composable results**: Easily chain and compose multiple operation results without nested conditionals.
 * **Extensible design**: Designed with extensibility in mind, allowing for seamless integration with existing projects and further customization.
 ## Getting Started
@@ -16,8 +16,8 @@ Creating a Result object is a straightforward way to wrap the outcome of operati
 There are several static factory methods in the `Result` class which can be used for an operation result creation.
 
 The following example shows a simple way to create result object. The made up method `createAccount(...)` performs a validation before it creates an account.
-* **Failure Case**: If the account already exists,` Result.failure("The account already exists")` is returned, indicating the operation's failure with an appropriate error message.
-* **Success Case**: For a new account, the method proceeds with creation and returns `Result.success(create(name))`, encapsulating the new account's identifier.
+* **Failure case**: If the account already exists,` Result.failure("The account already exists")` is returned, indicating the operation's failure with an appropriate error message.
+* **Success case**: For a new account, the method proceeds with creation and returns `Result.success(create(name))`, encapsulating the new account's identifier.
 
 ```Java
     public Result<Long> createAccount(String name) {

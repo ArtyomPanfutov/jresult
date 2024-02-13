@@ -145,6 +145,60 @@ There are several methods to get the result object from a result.
 * Opt for `getObjectOrElse(T defaultValue)` to provide a fallback value, enhancing fault tolerance.
 * Leverage `getObjectOrElse(Supplier<T> supplier)` for performance-sensitive contexts where constructing the default value is costly or unnecessary unless required.
 * Use `getOptionalObject()` to utilize the `Optional` API.
- 
+
+### Managing the errors
+The `Result` class is designed to handle not only the outcome of operations but also associated errors. These errors could represent critical failures or non-critical issues in both successful and unsuccessful operations.
+
+Note, the failed operation result always contains at least one error.
+
+There are several methods to work with errors.
+
+* `hasErrors()`: This method checks if there are any errors present in the result. It's a quick way to ascertain the existence of errors without needing to inspect the actual content.
+```Java
+    public void hasErrorsExample() {
+        var result = createAccount("New account");
+        if (result.hasErrors()) {
+            // Handle the presence of one or more errors
+        }
+    }
+ ```
+* `firstError()`: Retrieves the first error in the collection, which is often the primary or only error needed for evaluation. If there are no errors, this method will throw an exception, making it important to use `hasErrors()` beforehand to avoid exceptions.
+```Java
+    public void firstErrorExample() {
+        createAccount("My new account")
+                .ifFailure(failure -> System.out.println("Error: " + failure.firstError()));
+    }
+```
+* `errorCount()`:the total number of errors contained within the result.
+```Java
+    public void errorCountExample() {
+        var result = createAccount("My new account");
+        System.out.println("Error count:" + result.errorCount());
+    }
+```
+* `errors()`: Provides access to the complete list of errors. This method is invaluable when all errors need to be processed, displayed, or logged.
+```Java
+    public void errorCountExample() {
+        createAccount("My new account")
+                .errors().forEach(System.out::println);
+    }
+```
+In many cases, only the first or primary error is relevant. `firstError()` is optimized for such scenarios, though it should be prefaced with a `hasErrors()` check to prevent the exception.
+
+#### Error additional context 
+The `Error` class is designed to encapsulate comprehensive information about errors beyond just a simple message. 
+
+It supports including an associated `Throwable` object and a metadata map, enriching the error details and providing deeper insights into the error context.
+
+```Java
+    public void errorWithThrowableAndMetadata() {
+        var result = Result.failure(
+                new Error("Something went wrong", exception, Map.of("Severity", "Critical")));
+
+        System.out.println("Error message " + result.firstError().getMessage());
+        System.out.println("Throwable " + result.firstError().getThrowable());
+        System.out.println("Metadata" + result.firstError().getMetadata());
+    }
+```
 ## License
 **JResult** is open-sourced under the MIT license. Feel free to use it, contribute, and spread the word!

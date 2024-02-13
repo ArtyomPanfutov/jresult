@@ -358,7 +358,7 @@ class ResultTest {
         var other = new Object();
 
         // WHEN
-        var retrieved = result.objectOrElseGet(() -> other);
+        var retrieved = result.getObjectOrElse(() -> other);
 
         // THEN
         assertEquals(other, retrieved);

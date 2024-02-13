@@ -346,7 +346,7 @@ public class Result<T> {
      *
      * @return A result object.
      */
-    public T objectOrElseGet(Supplier<T> supplier) {
+    public T getObjectOrElse(Supplier<T> supplier) {
         return object == null ? supplier.get() : object;
     }
 

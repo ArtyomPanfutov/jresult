@@ -11,7 +11,7 @@ By encapsulating the results of operations in a Result<T> object, **JResult** of
 * **Extensible design**: Designed with extensibility in mind, allowing for seamless integration with existing projects and further customization.
 ## Getting Started
 ### Constructing the result objects
-Creating a Result object is a straightforward way to encapsulate the outcome of operations, which might succeed or fail based on certain conditions. 
+Creating a Result object is a straightforward way to wrap the outcome of operations, which might succeed or fail based on certain conditions. 
 
 There are several static factory methods in the `Result` class which can be used for an operation result creation.
 

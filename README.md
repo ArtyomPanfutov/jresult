@@ -1,6 +1,7 @@
 # JResult
 ## Description
 **JResult** is a Java library designed to handle operation outcomes, making error handling and result processing cleaner and more intuitive. 
+
 By encapsulating the results of operations in a Result<T> object, **JResult** offers a robust alternative to traditional exception handling, enhancing code readability, maintainability, and error management in Java applications.
 ## Key Features
 * **Generic result container**: Handle any operation outcome, success or failure, with a single, type-safe Result<T> class.
@@ -11,6 +12,7 @@ By encapsulating the results of operations in a Result<T> object, **JResult** of
 ## Getting Started
 ### Constructing the result objects
 Creating a Result object is a straightforward way to encapsulate the outcome of operations, which might succeed or fail based on certain conditions. 
+
 There are several static factory methods in the `Result` class which can be used for an operation result creation.
 
 The following example shows a simple way to create result object. The made up method `createAccount(...)` performs a validation before it creates an account.

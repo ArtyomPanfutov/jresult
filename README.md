@@ -54,9 +54,9 @@ Alternatively, the result can be handled using the traditional `if-else` stateme
 Result chaining is a powerful technique to execute a series of operations where each subsequent operation depends on the success of its predecessor.
 
 #### Sequential execution:
-* **Starting point**: The chain initiates with the createAccount("Account 1") operation. The continuation of the chain hinges on the success of this initial call.
-* **Continuation criteria**: Upon a successful outcome, the next createAccount(...) operation is triggered. This pattern repeats, with each operation's success cueing the next in the sequence.
-* **Termination on failure**: Should any createAccount(...) operation fail, the chain ceases to proceed, preventing any further operations from executing. This ensures the chain's integrity by not executing subsequent operations based on a failed precursor.
+* **Starting point**: The chain initiates with the `createAccount("Account 1")` operation. The continuation of the chain hinges on the success of this initial call.
+* **Continuation criteria**: Upon a successful outcome, the next `createAccount(...)` operation is triggered. This pattern repeats, with each operation's success cueing the next in the sequence.
+* **Termination on failure**: Should any `createAccount(...)` operation fail, the chain ceases to proceed, preventing any further operations from executing. This ensures the chain's integrity by not executing subsequent operations based on a failed precursor.
 ```Java
     public void createAccountsExample() {
         createAccount("Account 1")

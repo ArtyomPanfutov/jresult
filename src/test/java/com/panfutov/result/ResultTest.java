@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -374,6 +375,30 @@ class ResultTest {
 
         // THEN
         assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
+    void testGetObjectOptionalNotPresent() {
+        // GIVEN
+        var result = Result.successVoid();
+
+        // WHEN
+        Optional<Void> optional = result.getOptionalObject();
+
+        // THEN
+        assertTrue(optional.isEmpty());
+    }
+
+    @Test
+    void testGetObjectOptionalPresent() {
+        // GIVEN
+        var result = Result.success(OBJECT);
+
+        // WHEN
+        Optional<Object> optional = result.getOptionalObject();
+
+        // THEN
+        assertTrue(optional.isPresent());
     }
 
     @Test

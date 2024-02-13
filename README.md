@@ -130,11 +130,21 @@ There are several methods to get the result object from a result.
     }
 ```
 
+* `getOptionalObject()`: Allows to wrap an object into an `Optional`.
+```Java
+    public void getOptionalObjectExample() {
+        var result = createAccount("New account");
+        result.getOptionalObject()
+                .map(this::findById);
+    }
+```
+
 #### Best Practices
 * Utilize `getObject(`) for cases where a null outcome is acceptable or expected.
 * Apply `getNonNullObject()` when the operation's result must not be null, ensuring program integrity.
 * Opt for `getObjectOrElse(T defaultValue)` to provide a fallback value, enhancing fault tolerance.
 * Leverage `getObjectOrElse(Supplier<T> supplier)` for performance-sensitive contexts where constructing the default value is costly or unnecessary unless required.
+* Use `getOptionalObject()` to utilize the `Optional` API.
  
 ## License
 **JResult** is open-sourced under the MIT license. Feel free to use it, contribute, and spread the word!

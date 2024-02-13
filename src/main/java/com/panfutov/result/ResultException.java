@@ -23,8 +23,16 @@
  */
 package com.panfutov.result;
 
+/**
+ * A generic exception that indicate a critical failure.
+ */
 public class ResultException extends RuntimeException {
 
+    /**
+     * Constructs a ResultException with a message.
+     *
+     * @param message A text message.
+     */
     public ResultException(String message) {
         super(message);
     }

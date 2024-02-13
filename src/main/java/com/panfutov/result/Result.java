@@ -39,12 +39,24 @@ import static java.util.Objects.requireNonNull;
  */
 public class Result<T> {
 
+    /**
+     * The Void result instance.
+     */
     protected static final Result<Void> SUCCESS_VOID = new Result<>(true, null, emptyList());
 
+    /**
+     * A flag indicating the success/failure of an operation.
+     */
     protected final boolean success;
 
+    /**
+     * An object that is the result of an operation.
+     */
     protected final T object;
 
+    /**
+     * A list with errors.
+     */
     protected final List<GenericError> errors;
 
     protected Result(boolean success, T object, List<GenericError> errors) {
@@ -57,6 +69,7 @@ public class Result<T> {
      * Constructs a result object for a succeeded operation.
      *
      * @param object An object that is the result of an operation.
+     * @param <T> A type parameter.
      *
      * @return Success result with a wrapped object.
      */
@@ -69,6 +82,7 @@ public class Result<T> {
      *
      * @param object An object that is the result of an operation.
      * @param errors The list of errors that occurred during an operation.
+     * @param <T> A type parameter.
      *
      * @return Success result with a wrapped object and errors.
      */
@@ -81,6 +95,7 @@ public class Result<T> {
      *
      * @param object An object that is the result of an operation.
      * @param message An error message that occurred during an operation.
+     * @param <T> A type parameter.
      *
      * @return Success result with a wrapped object and errors.
      */
@@ -123,6 +138,7 @@ public class Result<T> {
      * Constructs a result object for a failed operation.
      *
      * @param errors The errors that have been collected during an operation.
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -134,6 +150,7 @@ public class Result<T> {
      * Constructs a result object for a failed operation.
      *
      * @param error The error message that occurred during an operation.
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -145,6 +162,7 @@ public class Result<T> {
      * Constructs a result object for a failed operation.
      *
      * @param errorMessage The error message that occurred during an operation.
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -156,6 +174,7 @@ public class Result<T> {
      * Constructs a result object for a failed operation.
      *
      * @param throwable An exception that occurred during an operation
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -168,6 +187,7 @@ public class Result<T> {
      *
      * @param message An error message that occurred during an operation.
      * @param throwable An exception that occurred during an operation.
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -181,6 +201,7 @@ public class Result<T> {
      * @param message An error message that occurred during an operation.
      * @param throwable An exception that occurred during an operation.
      * @param metadata A metadata map for additional information about the error.
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -193,6 +214,7 @@ public class Result<T> {
      *
      * @param firstError The error message that occurred during an operation.
      * @param otherErrors The additional error messages to complement the first error
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -211,6 +233,7 @@ public class Result<T> {
      *
      * @param firstError The error message that occurred during an operation.
      * @param otherErrors The additional error messages to complement the first error
+     * @param <T> A type parameter.
      *
      * @return Error result.
      */
@@ -235,7 +258,7 @@ public class Result<T> {
     }
 
     /**
-     * Inverted value of {@link this#isSuccess()}
+     * Inverted value of isSuccess() method.
      *
      * @return True — if error. False — if true.
      */
@@ -293,8 +316,6 @@ public class Result<T> {
      * Performs an action if the current result is success;
      *
      * @param action An action to execute.
-     *
-     * @return A result of the executed action, or the current result if it failed.
      */
     public void ifSuccess(Consumer<Result<T>> action) {
         if (isSuccess()) {
@@ -362,6 +383,15 @@ public class Result<T> {
     }
 
     /**
+     * Returns an optional of an object.
+     *
+     * @return An optional of a result object.
+     */
+    public Optional<T> getOptionalObject() {
+        return Optional.ofNullable(object);
+    }
+
+    /**
      * The errors that have been collected during an operation.
      *
      * @return A list of errors.
@@ -414,6 +444,13 @@ public class Result<T> {
         private Boolean success;
         private T object;
         private List<GenericError> errors;
+
+
+        /**
+         * A private constructor.
+         */
+        private Builder() {
+        }
 
         /**
          * Sets the success flag.

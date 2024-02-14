@@ -160,7 +160,8 @@ There are several methods to get the result object from a result.
 ```
 
 * `mapObject(Function<T, ? extends U> mapper)`: The method designed to apply a transformation function to the result object of a successful operation, converting it into another type.
-  It's commonly used in conjunction with `ifSuccess(...)` method, ensuring the transformation occurs only if the preceding operation was successful.
+ It's commonly used in conjunction with `ifSuccess(...)` method, ensuring the transformation occurs only if the preceding operation was successful.
+ Keep in mind, that the `mapObject(...)` function will throw an exception if a result object is null.
 ```Java
     public void mapObjectExample() {
         var account = createAccount("New account")

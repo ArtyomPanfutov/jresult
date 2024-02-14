@@ -42,7 +42,7 @@ The following example shows a simple way to create result object. The `createAcc
 
 The `Result` class offers methods for handling the result in functional style using the lambda expressions.
 
-The client code for the `createAccount(...)` method might look like this.
+The client code for the `createAccount(...)` method might look like this. It utilizes `ifFailure(...)` and `ifSuccess(...)` methods to execute code depending on the outcome.
 ```Java
     public void createAccountExample() {
         createAccount("My new account")
@@ -50,9 +50,9 @@ The client code for the `createAccount(...)` method might look like this.
                 .ifSuccess(success -> System.out.println("Created account " + success.getObject()));
     }
 ```
-Or using a `map(...)` function to which you can pass two mappers — for the success and the failure outcomes.
+Or you can use a map a `map(...)` function to which you can pass two mappers — for the success and the failure outcomes.
 ```Java
-public void mapExample() {
+public void createAccountExample() {
     var account = createAccount("New account")
             .map(Result::getNonNullObject, result -> fetchDefault());
 }

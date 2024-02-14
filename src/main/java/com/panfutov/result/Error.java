@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A concrete error implementation.
@@ -37,6 +38,16 @@ import static java.util.Collections.unmodifiableMap;
  * @param metadata {@link GenericError#getMetadata()}
  */
 public record Error(String message, Throwable throwable, Map<String, ?> metadata) implements GenericError {
+
+    /**
+     *
+     * @param message A text message. Must not be NULL.
+     * @param throwable A throwable object. Optional.
+     * @param metadata A metadata map. Optional.
+     */
+    public Error {
+        requireNonNull(message);
+    }
 
     /**
      * Creates an error with message.
@@ -53,7 +64,7 @@ public record Error(String message, Throwable throwable, Map<String, ?> metadata
      * @param throwable A source throwable.
      */
     public Error(Throwable throwable) {
-        this(throwable.getMessage(), throwable, null);
+        this(throwable.getMessage() == null ? "" : throwable.getMessage(), throwable, null);
     }
 
     /**

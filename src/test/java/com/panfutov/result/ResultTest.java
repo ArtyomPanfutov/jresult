@@ -85,6 +85,18 @@ class ResultTest {
     }
 
     @Test
+    void testSuccessWithNullTextError() {
+        // GIVEN
+        String message = null;
+
+        // WHEN
+        Executable command = () -> Result.success(object, message);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
     void testSuccessVoid() {
         // WHEN
         var result = Result.successVoid();
@@ -103,6 +115,18 @@ class ResultTest {
         assertNull(result.getObject());
         assertTrue(result.isSuccess());
         assertTrue(result.hasErrors());
+    }
+
+    @Test
+    void testSuccessVoidWithErrorOnNullMessage() {
+        // GIVEN`
+        String message = null;
+
+        // WHEN
+        Executable command = () -> Result.successVoid(message);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
     }
 
     @Test
@@ -227,6 +251,18 @@ class ResultTest {
     }
 
     @Test
+    void testFailureOnNullMessage() {
+        // GIVEN
+        String message = null;
+
+        // WHEN
+        Executable command = () -> Result.failure(message);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
     void testHasErrorsOnSuccess() {
         // WHEN
         var result = Result.successVoid();
@@ -278,6 +314,19 @@ class ResultTest {
     }
 
     @Test
+    void testIfSuccessOnNullConsumer() {
+        // GIVEN
+        var result = Result.failure(ERROR);
+        Consumer<Result<Object>> nullConsumer = null;
+
+        // WHEN
+        Executable command = () -> result.ifSuccess(nullConsumer);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
     void testIfSuccessForSupplier() {
         // GIVEN
         var result = Result.successVoid();
@@ -303,6 +352,19 @@ class ResultTest {
     }
 
     @Test
+    void testIfSuccessOnNullSupplier() {
+        // GIVEN
+        var result = Result.success(null);
+        Supplier<Result<Object>> nullSupplier = null;
+
+        // WHEN
+        Executable command = () -> result.ifSuccess(nullSupplier);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
     void testIfFailure() {
         // GIVEN
         var result = Result.failure(ERROR_TEXT);
@@ -325,6 +387,18 @@ class ResultTest {
         // THEN
         verifyNoInteractions(consumer);
         assertEquals(result, another);
+    }
+
+    @Test
+    void testIfFailureOnNullConsumer() {
+        // GIVEN
+        var result = Result.success(null);
+
+        // WHEN
+        Executable command = () -> result.ifFailure(null);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
     }
 
     @Test
@@ -363,6 +437,18 @@ class ResultTest {
 
         // THEN
         assertEquals(other, retrieved);
+    }
+
+    @Test
+    void testObjectOrElseGetOnNull() {
+        // GIVEN
+        var result = Result.success(null);
+
+        // WHEN
+        Executable command = () -> result.getObjectOrElse(null);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
     }
 
     @Test

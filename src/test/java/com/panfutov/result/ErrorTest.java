@@ -1,6 +1,7 @@
 package com.panfutov.result;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Map;
 
@@ -62,4 +63,27 @@ class ErrorTest {
         assertFalse(error.getMessage().isEmpty());
     }
 
+    @Test
+    void testNullMessage() {
+        // GIVEN
+        String message = null;
+
+        // WHEN
+        Executable command = () -> new Error(message);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
+    void testNullMessageInThrowable() {
+        // GIVEN
+        var exception = new RuntimeException();
+
+        // WHEN
+        var error = new Error(exception);
+
+        // THEN
+        assertEquals("", error.getMessage());
+    }
 }

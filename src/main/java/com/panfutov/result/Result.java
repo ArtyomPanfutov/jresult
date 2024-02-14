@@ -307,6 +307,7 @@ public class Result<T> {
      * @return A result of the executed action, or the current result if it failed.
      */
     public Result<T> ifSuccess(Supplier<Result<T>> action) {
+        requireNonNull(action);
         if (isSuccess()) {
             return action.get();
         }
@@ -319,6 +320,7 @@ public class Result<T> {
      * @param action An action to execute.
      */
     public void ifSuccess(Consumer<Result<T>> action) {
+        requireNonNull(action);
         if (isSuccess()) {
             action.accept(this);
         }
@@ -332,6 +334,7 @@ public class Result<T> {
      * @return The current result.
      */
     public Result<T> ifFailure(Consumer<Result<T>> action) {
+        requireNonNull(action);
         if (isFailure()) {
             action.accept(this);
         }
@@ -369,6 +372,7 @@ public class Result<T> {
      * @return A result object.
      */
     public T getObjectOrElse(Supplier<T> supplier) {
+        requireNonNull(supplier);
         return object == null ? supplier.get() : object;
     }
 

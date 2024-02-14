@@ -20,25 +20,25 @@ Exception handling can be expensive in terms of performance, especially if excep
 * **Composable results**: Easily chain and compose multiple operation results without nested conditionals.
 * **Extensible design**: Designed with extensibility in mind, allowing for seamless integration with existing projects and further customization.
 ## Getting Started
+The release is planned but not yet done. For now, you can pull the source code of this repository to try it.
 ### Constructing the result objects
 Creating a Result object is a straightforward way to wrap the outcome of operations, which might succeed or fail based on certain conditions. 
 
 There are several static factory methods in the `Result` class which can be used for an operation result creation.
 
 The source code that is used in the examples uses an imaginary method `createAccount(String name)` which returns a `Result` object.
-
-The following example shows a simple way to create result object. The made up method `createAccount(...)` performs a validation before it creates an account.
+The following example shows a simple way to create result object. The `createAccount(...)` method performs a validation before it creates an account.
+```Java
+ public Result<Long> createAccount(String name) {
+    if (accountExists(name)) {
+       return Result.failure("The account is already exists");
+    }
+    return Result.success(create(name));
+ }
+```
 * **Failure case**: If the account already exists,` Result.failure("The account already exists")` is returned, indicating the operation's failure with an appropriate error message.
 * **Success case**: For a new account, the method proceeds with creation and returns `Result.success(create(name))`, encapsulating the new account's identifier.
 
-```Java
-    public Result<Long> createAccount(String name) {
-        if (accountExists(name)) {
-            return Result.failure("The account is already exists");
-        }
-        return Result.success(create(name));
-    }
-```
 
 The `Result` class offers methods for handling the result in functional style using the lambda expressions.
 

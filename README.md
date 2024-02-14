@@ -25,6 +25,8 @@ Creating a Result object is a straightforward way to wrap the outcome of operati
 
 There are several static factory methods in the `Result` class which can be used for an operation result creation.
 
+The source code that is used in the examples uses an imaginary method `createAccount(String name)` which returns a `Result` object.
+
 The following example shows a simple way to create result object. The made up method `createAccount(...)` performs a validation before it creates an account.
 * **Failure case**: If the account already exists,` Result.failure("The account already exists")` is returned, indicating the operation's failure with an appropriate error message.
 * **Success case**: For a new account, the method proceeds with creation and returns `Result.success(create(name))`, encapsulating the new account's identifier.
@@ -48,6 +50,14 @@ The client code for the `createAccount(...)` method might look like this.
                 .ifSuccess(success -> System.out.println("Created account " + success.getObject()));
     }
 ```
+Or using a `map(...)` function to which you can pass two mappers — for the success and the failure outcomes.
+```Java
+public void mapExample() {
+    var account = createAccount("New account")
+            .map(Result::getNonNullObject, result -> fetchDefault());
+}
+```
+
 Alternatively, the result can be handled using the traditional `if-else` statements and the boolean flag that indicate the operation success.
 ```Java
     public void createAccountExample() {
@@ -146,6 +156,15 @@ There are several methods to get the result object from a result.
         var result = createAccount("New account");
         result.getOptionalObject()
                 .map(this::findById);
+    }
+```
+
+* `mapObject(Function<T, ? extends U> mapper)`: The method designed to apply a transformation function to the result object of a successful operation, converting it into another type.
+  It's commonly used in conjunction with `ifSuccess(...)` method, ensuring the transformation occurs only if the preceding operation was successful.
+```Java
+    public void mapObjectExample() {
+        var account = createAccount("New account")
+                .ifSuccess(result -> result.mapObject(this::findById));
     }
 ```
 

@@ -26,6 +26,7 @@ package com.panfutov.result;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
@@ -394,6 +395,39 @@ public class Result<T> {
      */
     public Optional<T> getOptionalObject() {
         return Optional.ofNullable(object);
+    }
+
+    /**
+     * Maps an operation result object to a target object depending on an operation outcome.
+     *
+     * @param successMapper A success mapper function. Required.
+     * @param failureMapper A failure mapper function. Required.
+     *
+     * @return A mapped object.
+     *
+     * @param <U> A target type parameter.
+     */
+    public <U> U map(Function<Result<T>, ? extends U> successMapper, Function<Result<T>, ? extends U> failureMapper) {
+        requireNonNull(successMapper);
+        requireNonNull(failureMapper);
+        if (isSuccess()) {
+            return successMapper.apply(this);
+        }
+        return failureMapper.apply(this);
+    }
+
+    /**
+     * Maps an operation result object to a target object.
+     *
+     * @param mapper A mapper function. Required.
+     *
+     * @return A mapped object.
+     *
+     * @param <U> A target type parameter.
+     */
+    public <U> U mapObject(Function<T, ? extends U> mapper) {
+        requireNonNull(mapper);
+        return mapper.apply(this.getNonNullObject());
     }
 
     /**

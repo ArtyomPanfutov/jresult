@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -45,6 +46,12 @@ class ResultTest {
 
     @Mock
     private Supplier<Result<Object>> objectSupplier;
+
+    @Mock
+    private Function<Result<Object>, Integer> successMapper;
+
+    @Mock
+    private Function<Result<Object>, Integer> failureMapper;
 
     @BeforeEach
     public void init() {
@@ -485,6 +492,56 @@ class ResultTest {
 
         // THEN
         assertTrue(optional.isPresent());
+    }
+
+    @Test
+    void testMapOnSuccess() {
+        // GIVEN
+        var result = Result.success(OBJECT);
+
+        // WHEN
+        result.map(successMapper, failureMapper);
+
+        // THEN
+        verifyNoInteractions(failureMapper);
+        verify(successMapper).apply(any());
+    }
+
+    @Test
+    void testMapOnFailure() {
+        // GIVEN
+        var result = Result.failure(ERROR_TEXT);
+
+        // WHEN
+        result.map(successMapper, failureMapper);
+
+        // THEN
+        verifyNoInteractions(successMapper);
+        verify(failureMapper).apply(any());
+    }
+
+    @Test
+    void testMapObject() {
+        // GIVEN
+        var result = Result.success(10);
+
+        // WHEN
+        String mapped = result.mapObject(String::valueOf);
+
+        // THEN
+        assertEquals("10", mapped);
+    }
+
+    @Test
+    void testMapObjectOnNullFunction() {
+        // GIVEN
+        var result = Result.success(10);
+
+        // WHEN
+        Executable command = () -> result.mapObject(null);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
     }
 
     @Test

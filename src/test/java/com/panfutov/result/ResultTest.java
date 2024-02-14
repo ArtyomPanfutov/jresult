@@ -495,12 +495,12 @@ class ResultTest {
     }
 
     @Test
-    void testMapOnSuccess() {
+    void testResolveOnSuccess() {
         // GIVEN
         var result = Result.success(OBJECT);
 
         // WHEN
-        result.map(successMapper, failureMapper);
+        result.resolve(successMapper, failureMapper);
 
         // THEN
         verifyNoInteractions(failureMapper);
@@ -508,12 +508,12 @@ class ResultTest {
     }
 
     @Test
-    void testMapOnFailure() {
+    void testResolveOnFailure() {
         // GIVEN
         var result = Result.failure(ERROR_TEXT);
 
         // WHEN
-        result.map(successMapper, failureMapper);
+        result.resolve(successMapper, failureMapper);
 
         // THEN
         verifyNoInteractions(successMapper);

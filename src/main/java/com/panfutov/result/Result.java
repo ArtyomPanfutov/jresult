@@ -398,22 +398,23 @@ public class Result<T> {
     }
 
     /**
-     * Maps an operation result object to a target object depending on an operation outcome.
+     * Resolves an operation result object to a target object depending on an operation outcome.
      *
-     * @param successMapper A success mapper function. Required.
-     * @param failureMapper A failure mapper function. Required.
+     * @param successResolver A success resolver function. Required.
+     * @param failureResolver A failure resolver function. Required.
      *
-     * @return A mapped object.
+     * @return Resolved object.
      *
      * @param <U> A target type parameter.
      */
-    public <U> U map(Function<Result<T>, ? extends U> successMapper, Function<Result<T>, ? extends U> failureMapper) {
-        requireNonNull(successMapper);
-        requireNonNull(failureMapper);
+    public <U> U resolve(Function<Result<T>, ? extends U> successResolver,
+                         Function<Result<T>, ? extends U> failureResolver) {
+        requireNonNull(successResolver);
+        requireNonNull(failureResolver);
         if (isSuccess()) {
-            return successMapper.apply(this);
+            return successResolver.apply(this);
         }
-        return failureMapper.apply(this);
+        return failureResolver.apply(this);
     }
 
     /**

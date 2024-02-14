@@ -50,11 +50,11 @@ The client code for the `createAccount(...)` method might look like this. It uti
                 .ifSuccess(success -> System.out.println("Created account " + success.getObject()));
     }
 ```
-Or you can use a map a `map(...)` function to which you can pass two mappers — for the success and the failure outcomes.
+Or you can use a map a `resolve(...)` function to which you can pass two resolve lambda expressions — for the success and the failure outcomes.
 ```Java
 public void createAccountExample() {
     var account = createAccount("New account")
-            .map(Result::getNonNullObject, result -> fetchDefault());
+            .resolve(Result::getNonNullObject, result -> fetchDefault());
 }
 ```
 

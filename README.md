@@ -183,8 +183,10 @@ There are several methods to get the result object from a result.
  Keep in mind, that the `mapObject(...)` function will throw an exception if a result object is null.
 ```Java
     public void mapObjectExample() {
-        var account = createAccount("New account")
-                .ifSuccess(result -> result.mapObject(this::findById));
+        var result = createAccount("New account");
+        if (result.isSuccess()) {
+            System.out.println(result.mapObject(this::findById));
+        }
     }
 ```
 

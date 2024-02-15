@@ -20,7 +20,26 @@ Exception handling can be expensive in terms of performance, especially if excep
 * **Composable results**: Easily chain and compose multiple operation results without nested conditionals.
 * **Extensible design**: Designed with extensibility in mind, allowing for seamless integration with existing projects and further customization.
 ## Getting Started
-The release is planned but not yet done. For now, you can pull the source code of this repository to try it.
+### Include a dependency using your favorite dependency manager
+#### Apache Maven
+```xml
+<dependency>
+    <groupId>com.panfutov</groupId>
+    <artifactId>jresult</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+#### Gradle
+```dockerfile
+implementation group: 'com.panfutov', name: 'jresult', version: '0.0.1'
+```
+
+#### Gradle (Kotlin)
+```Kotlin
+implementation("com.panfutov:jresult:0.0.1")
+```
+
 ### Constructing the result objects
 Creating a Result object is a straightforward way to wrap the outcome of operations, which might succeed or fail based on certain conditions. 
 

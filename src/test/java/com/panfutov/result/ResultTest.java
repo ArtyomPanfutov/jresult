@@ -23,6 +23,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -52,6 +53,12 @@ class ResultTest {
 
     @Mock
     private Function<Result<Object>, Integer> failureMapper;
+
+    @Mock
+    private Function<Result<Integer>, Result<Integer>> function;
+
+    @Mock
+    private Function<Integer, Result<Integer>> functionInt;
 
     @BeforeEach
     public void init() {
@@ -542,6 +549,55 @@ class ResultTest {
 
         // THEN
         assertThrows(NullPointerException.class, command);
+    }
+
+    @Test
+    void testIfSuccessApply() {
+        // GIVEN
+        var result = Result.success(10);
+
+        // WHEN
+        result.ifSuccessApply(function);
+
+        // THEN
+        verify(function).apply(any());
+    }
+
+    @Test
+    void testIfSuccessApplyOnFailure() {
+        // GIVEN
+        Result<Integer> result = new Result<>(false, null, emptyList());
+
+        // WHEN
+        result.ifSuccessApply(function);
+
+        // THEN
+        verifyNoInteractions(function);
+    }
+
+    @Test
+    void testIfSuccessUseObject() {
+        // GIVEN
+        int value = 10;
+        var result = Result.success(value);
+
+        // WHEN
+        result.ifSuccessUseObject(functionInt);
+
+        // THEN
+        verify(functionInt).apply(eq(value));
+    }
+
+    @Test
+    void testIfSuccessUseObjectOnFailure() {
+        // GIVEN
+        Result<Integer> result = new Result<>(false, null, emptyList());
+
+        // WHEN
+        result.ifSuccessUseObject(functionInt);
+
+        // THEN
+        verifyNoInteractions(functionInt);
     }
 
     @Test

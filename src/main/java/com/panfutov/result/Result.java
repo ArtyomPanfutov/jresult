@@ -316,6 +316,32 @@ public class Result<T> {
     }
 
     /**
+     * Performs a function if the current result is success producing a new result.
+     *
+     * @param function A function to apply.
+     */
+    public Result<T> ifSuccessApply(Function<Result<T>, Result<T>> function) {
+        requireNonNull(function);
+        if (isSuccess()) {
+            return function.apply(this);
+        }
+        return this;
+    }
+
+    /**
+     * Performs a function using the value object if the current result is success producing a new result.
+     *
+     * @param function A function to apply.
+     */
+    public Result<T> ifSuccessUseObject(Function<T, Result<T>> function) {
+        requireNonNull(function);
+        if (isSuccess()) {
+            return function.apply(this.getNonNullObject());
+        }
+        return this;
+    }
+
+    /**
      * Performs an action if the current result is success;
      *
      * @param action An action to execute.

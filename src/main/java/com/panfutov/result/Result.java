@@ -466,6 +466,12 @@ public class Result<T> {
         return errors;
     }
 
+    /**
+     * Performs an action on each error.
+     * To use without explicit access to errors list.
+     *
+     * @param action An action to execute.
+     */
     public void forEachError(Consumer<? super GenericError> action) {
         requireNonNull(action);
         errors.forEach(action);

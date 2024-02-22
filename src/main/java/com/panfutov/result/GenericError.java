@@ -39,7 +39,7 @@ public interface GenericError {
     String getMessage();
 
     /**
-     * A some exception that could a cause of the failure. Optional.
+     * An exception that could a cause of the failure. Optional.
      *
      * @return A throwable object.
      */

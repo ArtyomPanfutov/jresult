@@ -11,7 +11,7 @@ The operation result pattern makes the control flow more predictable by explicit
 
 It clearly distinguishes between expected operational outcomes (both success and failure) and exceptional, unforeseen errors, making the code more understandable.
 
-Exception handling can be expensive in terms of performance, especially if exceptions are used frequently as part of normal control flow. The operation result pattern avoids this overhead, potentially leading to performance improvements in error-heavy scenarios.
+Exception handling can be expensive in terms of performance ([here](https://github.com/ArtyomPanfutov/exceptions-vs-jresult-benchmark/blob/main/README.md) is the benchmark), especially if exceptions are used frequently as part of normal control flow. The operation result pattern avoids this overhead, potentially leading to performance improvements in error-heavy scenarios.
 
 ## Key Features
 * **Generic result container**: Handle any operation outcome, success or failure, with a single, type-safe Result<T> class.

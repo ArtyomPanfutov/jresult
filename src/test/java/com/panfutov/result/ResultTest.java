@@ -24,8 +24,7 @@ import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ResultTest {
@@ -59,6 +58,9 @@ class ResultTest {
 
     @Mock
     private Function<Integer, Result<Integer>> functionInt;
+
+    @Mock
+    private Consumer<GenericError> errorConsumer;
 
     @BeforeEach
     public void init() {
@@ -612,6 +614,27 @@ class ResultTest {
         assertNotNull(errors);
         assertEquals(1, errors.size());
         assertEquals(ERROR, errors.getFirst());
+    }
+
+    @Test
+    void testForEachError() {
+        // GIVEN
+        var result = Result.failure(ERROR_TEXT, ERROR_TEXT, ERROR_TEXT);
+
+        // WHEN
+        result.forEachError(errorConsumer);
+
+        // THEN
+        verify(errorConsumer, times(3)).accept(any());
+    }
+
+    @Test
+    void testForEachErrorOnNullConsumer() {
+        // WHEN
+        Executable command = () -> Result.failure(ERROR_TEXT).forEachError(null);
+
+        // THEN
+        assertThrows(NullPointerException.class, command);
     }
 
     @ParameterizedTest

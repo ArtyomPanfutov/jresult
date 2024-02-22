@@ -466,6 +466,11 @@ public class Result<T> {
         return errors;
     }
 
+    public void forEachError(Consumer<? super GenericError> action) {
+        requireNonNull(action);
+        errors.forEach(action);
+    }
+
     /**
      * A builder for operation result.
      *

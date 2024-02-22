@@ -333,7 +333,7 @@ public class Result<T> {
      *
      * @param function A function to apply.
      */
-    public Result<T> ifSuccessUseObject(Function<T, Result<T>> function) {
+    public Result<T> ifSuccessApplyToObj(Function<T, Result<T>> function) {
         requireNonNull(function);
         if (isSuccess()) {
             return function.apply(this.getNonNullObject());

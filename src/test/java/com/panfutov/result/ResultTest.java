@@ -578,25 +578,25 @@ class ResultTest {
     }
 
     @Test
-    void testIfSuccessUseObject() {
+    void testIfSuccessApplyToObj() {
         // GIVEN
         int value = 10;
         var result = Result.success(value);
 
         // WHEN
-        result.ifSuccessUseObject(functionInt);
+        result.ifSuccessApplyToObj(functionInt);
 
         // THEN
         verify(functionInt).apply(eq(value));
     }
 
     @Test
-    void testIfSuccessUseObjectOnFailure() {
+    void testIfSuccessApplyToObjOnFailure() {
         // GIVEN
         Result<Integer> result = new Result<>(false, null, emptyList());
 
         // WHEN
-        result.ifSuccessUseObject(functionInt);
+        result.ifSuccessApplyToObj(functionInt);
 
         // THEN
         verifyNoInteractions(functionInt);

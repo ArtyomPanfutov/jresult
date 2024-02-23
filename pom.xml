@@ -6,7 +6,7 @@
 
     <groupId>com.panfutov</groupId>
     <artifactId>jresult</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <description>
         A Java implementation of the Operation Result Pattern.

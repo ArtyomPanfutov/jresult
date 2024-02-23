@@ -250,6 +250,24 @@ public class Result<T> {
     }
 
     /**
+     * Performs an action in a try-catch block and returns a result object.
+     * In case of an exception it constructs a failure result with error that contains the throwable.
+     *
+     * @param action An action to execute.
+     * @param <T> a type parameter.
+     *
+     * @return Failure if an exception is caught. Otherwise, — success.
+     */
+    public static <T> Result<T> tryExceptional(Supplier<T> action) {
+        requireNonNull(action);
+        try {
+            return Result.success(action.get());
+        } catch (Throwable e) {
+            return Result.failure(Error.fromThrowable(e));
+        }
+    }
+
+    /**
      * A boolean status of an operation.
      * Could be true even if the errors are not empty (e.g. not critical errors).
      *

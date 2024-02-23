@@ -225,6 +225,33 @@ class ResultTest {
     }
 
     @Test
+    void testTryExceptionalOnFailure() throws RuntimeException {
+        // WHEN
+        var result = Result.tryExceptional(() -> {
+            throw new RuntimeException(ERROR_TEXT);
+        });
+
+        // THEN
+        assertTrue(result.isFailure());
+        assertTrue(result.hasErrors());
+        assertEquals(ERROR_TEXT, result.firstError().getMessage());
+        assertNotNull(result.firstError().getThrowable());
+    }
+
+    @Test
+    void testTryExceptionalOnSuccess() {
+        // GIVEN
+        var input = 100;
+
+        // WHEN
+        var result = Result.tryExceptional(() -> input);
+
+        // THEN
+        assertTrue(result.isSuccess());
+        assertEquals(input, result.getNonNullObject());
+    }
+
+    @Test
     void testFailureWithMessageAndThrowable() {
         // WHEN
         var result = Result.failure(ERROR_TEXT, new RuntimeException());

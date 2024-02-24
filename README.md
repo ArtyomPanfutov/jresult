@@ -26,18 +26,18 @@ Exception handling can be expensive in terms of performance ([here](https://gith
 <dependency>
     <groupId>com.panfutov</groupId>
     <artifactId>jresult</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
 #### Gradle
 ```dockerfile
-implementation group: 'com.panfutov', name: 'jresult', version: '0.0.3'
+implementation group: 'com.panfutov', name: 'jresult', version: '0.0.4'
 ```
 
 #### Gradle (Kotlin)
 ```Kotlin
-implementation("com.panfutov:jresult:0.0.2")
+implementation("com.panfutov:jresult:0.0.4")
 ```
 
 ### Constructing the result objects

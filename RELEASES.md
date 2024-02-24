@@ -1,4 +1,20 @@
 # Releases
+## 0.0.4
+### Description
+* Add method `<T> Result<T> tryExceptional(Supplier<T> action)`
+#### Apache Maven
+```xml
+<dependency>
+    <groupId>com.panfutov</groupId>
+    <artifactId>jresult</artifactId>
+    <version>0.0.4</version>
+</dependency>
+```
+
+#### Gradle
+```dockerfile
+implementation group: 'com.panfutov', name: 'jresult', version: '0.0.4'
+```
 ## 0.0.2
 ### Description
 * Add method `Result<T> ifSuccessApply(Function<Result<T>, Result<T>> function)`

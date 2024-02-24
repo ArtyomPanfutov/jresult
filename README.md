@@ -26,13 +26,13 @@ Exception handling can be expensive in terms of performance ([here](https://gith
 <dependency>
     <groupId>com.panfutov</groupId>
     <artifactId>jresult</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
 #### Gradle
 ```dockerfile
-implementation group: 'com.panfutov', name: 'jresult', version: '0.0.2'
+implementation group: 'com.panfutov', name: 'jresult', version: '0.0.3'
 ```
 
 #### Gradle (Kotlin)
@@ -250,6 +250,15 @@ It supports including an associated `Throwable` object and a metadata map, enric
         System.out.println("Throwable " + result.firstError().getThrowable());
         System.out.println("Metadata" + result.firstError().getMetadata());
     }
+```
+
+#### Wrapping an exception
+It is possible to execute a piece of code and get a failure result if an exception will be caught using the `tryExceptional` method:
+```Java
+public void exceptionalExample() {
+    var result = Result.tryExceptional(() -> doSomethingThatCanThrow());
+    ...
+}
 ```
 ## License
 **JResult** is open-sourced under the MIT license. Feel free to use it, contribute, and spread the word!

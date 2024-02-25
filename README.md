@@ -260,5 +260,10 @@ public void exceptionalExample() {
     ...
 }
 ```
+
+## Not a Silver Bullet
+While the result pattern provides a compelling alternative to exceptions for handling expected operation outcomes, it is not a wholesale replacement. 
+A judicious use of both strategies — applying exceptions for truly exceptional conditions and result objects for managing operational outcomes — will help to write cleaner code.
+
 ## License
 **JResult** is open-sourced under the MIT license. Feel free to use it, contribute, and spread the word!
